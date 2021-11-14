@@ -14,6 +14,6 @@
      [expected-snake #:snake{:current-position {:x 40 :y 10}
                              :moving-direction :moving/up}
       expected-frame {:game-view/frame [{:pixel/position {:x 40 :y 10}}]}
-      expected-game  {:game-context/snake expected-snake
+      expected-game  {:game-context/game  {:game/snake expected-snake}
                       :game-context/view  expected-frame}]
       (is (match? expected-game my-game)))))

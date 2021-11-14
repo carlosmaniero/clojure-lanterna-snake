@@ -20,7 +20,7 @@
 
   #:pixel{:position         position
           :content          head-content
-          :foreground-color :blue})
+          :foreground-color :red})
 
 (s/defn ^:private snake->head->pixel :- views.screen/Pixel
   [snake :- domain.snake/Snake]

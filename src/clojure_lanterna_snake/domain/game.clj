@@ -3,3 +3,27 @@
             [clojure-lanterna-snake.domain.snake :as domain.snake]
             [clojure-lanterna-snake.domain.world :as domain.world]))
 
+(def Game
+  #:game{:snake      domain.snake/Snake
+         :world      domain.world/World})
+
+(s/defn create-game-with-snake
+  [snake :- domain.snake/Snake
+   world :- domain.world/World]
+
+  #:game{:snake snake :world world})
+
+(s/defn create-game :- Game
+  [world             :- domain.world/World
+   initial-direction :- domain.snake/MovingDirection]
+
+  (-> world
+      (domain.world/center-position)
+      (domain.snake/create-snake initial-direction)
+      (create-game-with-snake world)))
+
+(s/defn update-game :- Game
+  [game      :- Game
+   direction :- (s/maybe domain.snake/MovingDirection)]
+
+  (update game :game/snake #(domain.snake/move % direction)))

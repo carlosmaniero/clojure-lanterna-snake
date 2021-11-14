@@ -6,10 +6,12 @@
 
 
 (def some-pixel #:pixel{:position {:x 0 :y 1}
-                        :content  "a"})
+                        :content  "a"
+                        :foreground-color nil})
 
 (def another-pixel #:pixel{:position {:x 0 :y 2}
-                           :content  "b"})
+                           :content  "b"
+                           :background-color :red})
 
 (def some-pixels [some-pixel another-pixel])
 

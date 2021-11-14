@@ -16,13 +16,12 @@
                         :underline
                         :blinking))
 
-(def Pixel {:pixel/position         {:x s/Int :y s/Int}
-            :pixel/content          s/Str
-            :pixel/foreground-color s/maybe PixelColor
-            :pixel/background-color s/maybe PixelColor})
+(def Pixel {:pixel/position                          {:x s/Int :y s/Int}
+            :pixel/content                           s/Str
+            (s/optional-key :pixel/foreground-color) (s/maybe PixelColor)
+            (s/optional-key :pixel/background-color) (s/maybe PixelColor)})
 
-
-(s/defn join-pixels
+(s/defn join-pixels :- [Pixel]
   [pixels-a :- [Pixel]
    pixels-b :- [Pixel]]
 

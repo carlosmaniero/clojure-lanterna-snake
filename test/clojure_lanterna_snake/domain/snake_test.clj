@@ -17,33 +17,37 @@
                 my-snake))))
 
 (deftest moving-a-snake
-  (testing "follows the current moviment given no changed-direction"
+  #_(testing "follows the current moviment given no changed-direction"
     (aux-matchers/snake-match-moviment-position my-snake nil {:x 1 :y 1}))
 
-  (testing "goes up when direction changes to up"
-    (let [snake-moving-down (assoc my-snake :snake/moving-direction :moving/down)]
+  (testing "goes up when direction changes to up and does not allows moving down"
+    (let [snake-moving-down (assoc my-snake :snake/moving-direction :moving/left)]
       (-> snake-moving-down
-          (aux-matchers/snake-match-moviment-position :moving/up {:x 1 :y 1})
-          (aux-matchers/snake-match-moviment-position nil        {:x 1 :y 0})
-          (aux-matchers/snake-match-moviment-position nil        {:x 1 :y -1}))))
+          (aux-matchers/snake-match-moviment-position :moving/up   {:x 1 :y 1})
+          (aux-matchers/snake-match-moviment-position nil          {:x 1 :y 0})
+          (aux-matchers/snake-match-moviment-position nil          {:x 1 :y -1})
+          (aux-matchers/snake-match-moviment-position :moving/down {:x 1 :y -2}))))
 
-  (testing "goes down when direction changes to down"
-    (-> my-snake
+  (testing "goes down when direction changes to down and does not allows moving up"
+    (-> (assoc my-snake :snake/moving-direction :moving/left)
         (aux-matchers/snake-match-moviment-position :moving/down {:x 1 :y 3})
         (aux-matchers/snake-match-moviment-position nil          {:x 1 :y 4})
-        (aux-matchers/snake-match-moviment-position nil          {:x 1 :y 5})))
+        (aux-matchers/snake-match-moviment-position nil          {:x 1 :y 5})
+        (aux-matchers/snake-match-moviment-position :moving/up   {:x 1 :y 6})))
 
-  (testing "goes left when direction changes to left"
+  (testing "goes left when direction changes to left and does not allows moving right"
     (-> my-snake
-        (aux-matchers/snake-match-moviment-position :moving/left {:x 0 :y 2})
-        (aux-matchers/snake-match-moviment-position nil          {:x -1 :y 2})
-        (aux-matchers/snake-match-moviment-position nil          {:x -2 :y 2})))
+        (aux-matchers/snake-match-moviment-position :moving/left  {:x 0 :y 2})
+        (aux-matchers/snake-match-moviment-position nil           {:x -1 :y 2})
+        (aux-matchers/snake-match-moviment-position nil           {:x -2 :y 2})
+        (aux-matchers/snake-match-moviment-position :moving/right {:x -3 :y 2})))
 
-  (testing "goes right when direction changes to right"
+  (testing "goes right when direction changes to right and does not allows moving left"
     (-> my-snake
         (aux-matchers/snake-match-moviment-position :moving/right {:x 2 :y 2})
         (aux-matchers/snake-match-moviment-position nil           {:x 3 :y 2})
-        (aux-matchers/snake-match-moviment-position nil           {:x 4 :y 2}))))
+        (aux-matchers/snake-match-moviment-position nil           {:x 4 :y 2})
+        (aux-matchers/snake-match-moviment-position :moving/left  {:x 5 :y 2}))))
 
 (deftest with-extra-energy
   (testing "does not removes tails when moving given an extra energy"

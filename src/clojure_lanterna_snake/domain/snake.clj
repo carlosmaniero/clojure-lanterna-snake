@@ -7,6 +7,12 @@
 
 (def MovingDirection (s/enum :moving/up :moving/right :moving/left :moving/down))
 
+(def ^:private opose-direction-map
+  {:moving/up     :moving/down
+   :moving/down   :moving/up
+   :moving/right  :moving/left
+   :moving/left   :moving/right})
+
 (def default-velocity 100)
 (def slow-velocity    150)
 
@@ -45,11 +51,25 @@
    :snake/velocity         (velocity initial-direction)
    :snake/body             [initial-position]})
 
-(s/defn ^:private direction-or-snake-moving-direction :- MovingDirection
+
+(defn is-opose-direction
+  [direction current-direction]
+
+  (= (direction opose-direction-map) current-direction))
+
+
+(defn normalize-direction
+  [direction current-direction]
+
+  (if (is-opose-direction direction current-direction)
+    current-direction
+    direction))
+
+(s/defn ^:private normalized-direction-or-snake-moving-direction :- MovingDirection
   [direction snake]
   (if (nil? direction)
     (:snake/moving-direction snake)
-    direction))
+    (normalize-direction direction (:snake/moving-direction snake))))
 
 (defn ^:private strech-head
   [snake position]
@@ -71,7 +91,7 @@
   [snake             :- Snake
    changed-direction :- (s/maybe MovingDirection)]
 
-  (let [direction (direction-or-snake-moving-direction changed-direction snake)
+  (let [direction (normalized-direction-or-snake-moving-direction changed-direction snake)
         position  (position-after-move (:snake/current-position snake) direction)]
     (-> snake
         (assoc :snake/moving-direction direction

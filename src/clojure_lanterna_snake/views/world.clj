@@ -6,9 +6,10 @@
 (defn ^:private create-edge-pixel
   [position]
 
-  {:pixel/content "#"
+  {:pixel/content "░"
    :pixel/position position
-   :pixel/foreground-color :cyan})
+   :pixel/foreground-color :cyan
+   :pixel/background-color :red})
 
 (defn ^:private ->edge
   [axis start size fixed-axis fixed-axis-value]

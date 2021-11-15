@@ -4,6 +4,7 @@
             [clojure-lanterna-snake.domain.world :as domain.world]
             [clojure-lanterna-snake.domain.game  :as domain.game]
             [clojure-lanterna-snake.views.snake  :as views.snake]
+            [clojure-lanterna-snake.views.world  :as views.world]
             [clojure-lanterna-snake.views.screen :as views.screen]))
 
 (def GameView #:game-view{:frame [views.screen/Pixel]})
@@ -12,9 +13,21 @@
   #:game-context{:game domain.game/Game
                  :view GameView})
 
+(defn make-snake-frame
+  [game]
+
+  (views.snake/->view (get-in game [:game-context/game :game/snake])))
+
+(defn make-world-frame
+  [game]
+
+  (views.world/->view (get-in game [:game-context/game :game/world])))
+
 (s/defn make-frame :- GameView
   [game :- GameContext]
-  #:game-view{:frame (views.snake/->view (get-in game [:game-context/game :game/snake]))})
+  #:game-view{:frame (-> []
+                         (views.screen/join-pixels (make-snake-frame game))
+                         (views.screen/join-pixels (make-world-frame game)))})
 
 (s/defn create-game :- GameContext
   [world             :- domain.world/World

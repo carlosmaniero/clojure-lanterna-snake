@@ -1,6 +1,6 @@
 # Clojure Lanterna Snake
 
-An snake game based in ascii written in Clojure.
+A text-based snake game written in clojure.
 
 ## Usage
 

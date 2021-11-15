@@ -3,12 +3,17 @@
             [clojure-lanterna-snake.domain.snake :as domain.snake]
             [clojure-lanterna-snake.domain.world :as domain.world]))
 
+(def GameFloatRandomPosition
+  #:game-random-position{:x s/Num
+                         :y s/Num})
+
 (def Game
   #:game{:snake      domain.snake/Snake
          :world      domain.world/World})
 
 (def GameInput
-  #:game-input{:direction (s/maybe domain.snake/MovingDirection)})
+  #:game-input{:direction       (s/maybe domain.snake/MovingDirection)
+               :random-position GameFloatRandomPosition})
 
 (s/defn create-game-with-snake
   [snake :- domain.snake/Snake
@@ -18,7 +23,8 @@
 
 (s/defn create-game :- Game
   [world             :- domain.world/World
-   initial-direction :- domain.snake/MovingDirection]
+   initial-direction :- domain.snake/MovingDirection
+   random-position   :- GameFloatRandomPosition]
 
   (-> world
       (domain.world/center-position)

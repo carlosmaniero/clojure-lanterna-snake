@@ -7,7 +7,10 @@
             [matcher-combinators.matchers :as m]))
 
 (def my-world {:width 81 :height 21})
-(def my-game (game-controller/create-game my-world :moving/up))
+(def random-position {:game-random-position/x 0.25
+                      :game-random-position/y 0.75})
+(def my-game (game-controller/create-game my-world :moving/up random-position))
+
 
 (deftest creating-a-game
   (testing "puts the snake at the middle of the screen"

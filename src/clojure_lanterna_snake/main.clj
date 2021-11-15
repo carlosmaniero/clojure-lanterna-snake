@@ -14,15 +14,21 @@
     (= :down  typed) :moving/down
     (= :left  typed) :moving/left))
 
+(defn get-moviment-blocking
+  []
+  (->>
+   (s/get-key-blocking scr)
+   (key-to-moviment)))
+
 (defn start-game
   []
   (s/put-string scr 9 8 "Press an arrow key to start")
   (s/redraw scr)
 
-  (->>
-   (s/get-key-blocking scr)
-   (key-to-moviment)
-   (game-controller/create-game world)))
+  (game-controller/create-game world
+                               (get-moviment-blocking)
+                               {:game-random-position/x (rand)
+                                :game-random-position/y (rand)}))
 
 (defn pixel->put-string
   [pixel]
@@ -49,7 +55,9 @@
       (s/stop scr)
       (recur (game-controller/next-frame
               game
-              {:game-input/direction (key-to-moviment key)})))))
+              {:game-input/direction   (key-to-moviment key)
+               :game-input/random-position {:game-random-position/x (rand)
+                                            :game-random-position/y (rand)}})))))
 
 (defn -main
   [& args]

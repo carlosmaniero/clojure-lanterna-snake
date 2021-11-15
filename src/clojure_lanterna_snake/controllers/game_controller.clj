@@ -31,9 +31,10 @@
 
 (s/defn create-game :- GameContext
   [world             :- domain.world/World
-   initial-direction :- domain.snake/MovingDirection]
+   initial-direction :- domain.snake/MovingDirection
+   random-position   :- domain.game/GameFloatRandomPosition]
 
-  (let [game #:game-context{:game (domain.game/create-game world initial-direction)
+  (let [game #:game-context{:game (domain.game/create-game world initial-direction random-position)
                             :view #:game-view{:frame []}}]
     (assoc game :game-context/view (make-frame game))))
 

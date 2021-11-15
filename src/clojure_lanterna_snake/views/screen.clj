@@ -21,10 +21,20 @@
             (s/optional-key :pixel/foreground-color) (s/maybe PixelColor)
             (s/optional-key :pixel/background-color) (s/maybe PixelColor)})
 
+
+(defn background
+  [pixels]
+
+  (->> pixels
+   (map :pixel/background-color)
+       (filter some?)
+       (last)))
+
 (s/defn join-pixels :- [Pixel]
   [pixels-a :- [Pixel]
    pixels-b :- [Pixel]]
 
   (->> (into pixels-a pixels-b)
        (group-by :pixel/position)
-       (map (fn [[_ pixels]] (last pixels)))))
+       (map (fn [[_ pixels]]
+              (assoc (last pixels) :pixel/background-color (background pixels))))))

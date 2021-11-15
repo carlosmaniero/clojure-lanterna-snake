@@ -15,7 +15,7 @@
   [world           :- World
    object-position :- Position]
 
-  (some? (some true? [(= 1               (:x object-position))
-                      (= 1               (:y object-position))
-                      (= (:width  world) (:x object-position))
-                      (= (:height world) (:y object-position))])))
+  (some? (some true? [(= 0                     (:x object-position))
+                      (= 0                     (:y object-position))
+                      (= (dec (:width  world)) (:x object-position))
+                      (= (dec (:height world)) (:y object-position))])))

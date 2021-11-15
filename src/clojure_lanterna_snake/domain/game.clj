@@ -68,14 +68,26 @@
 
     (if (:food/eaten? eaten-food)
       (assoc game :game/snake (domain.snake/with-extra-energy snake (:food/energy eaten-food))
-                  :game/food  (create-food random-position world))
+             :game/food  (create-food random-position world))
+      game)))
+
+(s/defn snake-dead-if-collides
+  [game :- Game]
+
+  (let [snake          (:game/snake game)
+        snake-position (:snake/current-position snake)
+        world          (:game/world game)
+        colided        (domain.world/collided-with? world snake-position)]
+
+    (if colided
+      (update game :game/snake domain.snake/kill-snake)
       game)))
 
 (s/defn update-game :- Game
   [game  :- Game
    input :- GameInput]
 
-  (snake-try-to-eat
-   (update game :game/snake #(domain.snake/move % (:game-input/direction input)))
-   input))
+  (-> (update game :game/snake #(domain.snake/move % (:game-input/direction input)))
+      (snake-try-to-eat input)
+      (snake-dead-if-collides)))
 

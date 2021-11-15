@@ -8,12 +8,12 @@
 (deftest colliding
   (testing "collides with the edge when an edge position is given"
     (are [expected position] (= expected (domain.world/collided-with? my-world position))
-      true  {:x 1 :y 1}
+      true  {:x 0 :y 0}
+      true  {:x 1 :y 0}
+      true  {:x 2 :y 0}
+      true  {:x 0 :y 1}
+      false {:x 1 :y 1}
       true  {:x 2 :y 1}
-      true  {:x 3 :y 1}
+      true  {:x 0 :y 2}
       true  {:x 1 :y 2}
-      false {:x 2 :y 2}
-      true  {:x 3 :y 2}
-      true  {:x 1 :y 3}
-      true  {:x 2 :y 3}
-      true  {:x 3 :y 3})))
+      true  {:x 2 :y 2})))

@@ -28,3 +28,13 @@
 
       (is (match? {:snake/extra-energy 1} (:game/snake game-snake-ate)))
       (is (= {:x 4 :y 4} (get-in game-snake-ate [:game/food :food/position]))))))
+
+(deftest colliding-with-border
+  (testing "snake is dead when collides with border"
+    (let [game                       (domain.game/create-game my-world :moving/up random-position)
+          game-snake-about-to-colide (assoc-in game [:game/snake :snake/current-position] {:x 1 :y 1})
+          game-snake-dead            (domain.game/update-game game-snake-about-to-colide
+                                                              {:game-input/direction nil
+                                                               :game-input/random-position random-max-position})]
+
+      (is (match? {:snake/is-alive? false} (:game/snake game-snake-dead))))))

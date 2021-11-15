@@ -42,7 +42,9 @@
 
   (s/redraw scr)
 
-  (let [key (s/get-key-blocking scr {:timeout 100})]
+  (let [key (s/get-key-blocking scr {:timeout (get-in game [:game-context/game
+                                                            :game/snake
+                                                            :snake/velocity])})]
     (if (= key \q)
       (s/stop scr)
       (recur (game-controller/next-frame

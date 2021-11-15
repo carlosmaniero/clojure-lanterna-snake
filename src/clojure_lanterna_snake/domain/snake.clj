@@ -7,6 +7,18 @@
 
 (def MovingDirection (s/enum :moving/up :moving/right :moving/left :moving/down))
 
+(def default-velocity 100)
+(def slow-velocity    150)
+
+(s/defn ^:private velocity
+  [direction :- MovingDirection]
+
+  (cond
+    (= :moving/up    direction) slow-velocity
+    (= :moving/down  direction) slow-velocity
+    (= :moving/left  direction) default-velocity
+    (= :moving/right direction) default-velocity))
+
 (s/defn ^:private position-after-move :- domain.world/Position
   [position :- domain.world/Position
    direction :- MovingDirection]
@@ -21,6 +33,7 @@
    :snake/is-alive?        s/Bool
    :snake/moving-direction MovingDirection
    :snake/extra-energy     s/Int
+   :snake/velocity         s/Int
    :snake/body             [domain.world/Position]})
 
 (s/defn create-snake :- Snake [initial-position :- domain.world/Position
@@ -29,6 +42,7 @@
    :snake/moving-direction initial-direction
    :snake/is-alive?        true
    :snake/extra-energy     0
+   :snake/velocity         (velocity initial-direction)
    :snake/body             [initial-position]})
 
 (s/defn ^:private direction-or-snake-moving-direction :- MovingDirection
@@ -60,6 +74,8 @@
   (let [direction (direction-or-snake-moving-direction changed-direction snake)
         position  (position-after-move (:snake/current-position snake) direction)]
     (-> snake
-        (assoc :snake/moving-direction direction :snake/current-position position)
+        (assoc :snake/moving-direction direction
+               :snake/current-position position
+               :snake/velocity         (velocity direction))
         (strech-head position)
         (loose-energy))))

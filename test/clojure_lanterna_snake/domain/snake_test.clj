@@ -57,3 +57,14 @@
                 (-> my-snake
                     (domain.snake/with-extra-energy 1)
                     (domain.snake/with-extra-energy 1))))))
+
+(deftest controlling-velocity
+  (testing "snake controlls velocy"
+    (are
+     [expected direction]
+     (= expected (:snake/velocity (domain.snake/move my-snake direction)))
+      100      :moving/left
+      100      :moving/right
+      150      :moving/up
+      150      :moving/down)))
+

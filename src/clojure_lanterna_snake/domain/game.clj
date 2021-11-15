@@ -27,7 +27,7 @@
 (defn ^:private normalize-random-position
   [random-position max-value]
 
-  (+ 2 (int (* random-position (- max-value 3)))))
+  (inc (int (* random-position (- max-value 2)))))
 
 (s/defn random-position->-world-position
   [random-position world]

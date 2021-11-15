@@ -13,5 +13,5 @@
           game-max-position (domain.game/create-game my-world :moving/up
                                                      {:game-random-position/x 1
                                                       :game-random-position/y 1})]
-      (is (= {:x 2 :y 2} (get-in game-min-position [:game/food :food/position])))
+      (is (= {:x 1 :y 1} (get-in game-min-position [:game/food :food/position])))
       (is (= {:x 4 :y 4} (get-in game-max-position [:game/food :food/position]))))))

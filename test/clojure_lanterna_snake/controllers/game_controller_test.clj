@@ -14,9 +14,9 @@
     (let
      [expected-snake       #:snake{:current-position {:x 40 :y 10}
                                    :moving-direction :moving/up}
-      expected-snake-frame {:pixel/position {:x 40 :y 10}
-                            :pixel/content  "x"}
-      expected-world-frame {:pixel/position {:x 1 :y 1}
+      expected-snake-frame {:pixel/position         {:x 40 :y 10}
+                            :pixel/foreground-color :green}
+      expected-world-frame {:pixel/position         {:x 1 :y 1}
                             :pixel/foreground-color :cyan}
       expected-frame       [expected-snake-frame expected-world-frame]]
       (is (match? expected-snake

@@ -12,15 +12,15 @@
   (testing "maps the head to pixels"
     (let
      [my-view         (views.snake/->view my-snake)
-      expected-pixels [#:pixel{:position {:x 2 :y 2}
-                               :content  "x"}]]
+      expected-pixels [#:pixel{:position         {:x 2 :y 2}
+                               :foreground-color :green}]]
       (is (match? expected-pixels my-view))))
 
   (testing "maps the body to pixels"
     (let
      [my-view         (views.snake/->view my-snake-with-body)
-      expected-pixels [#:pixel{:position {:x 2 :y 2}
-                               :content  "x"}
-                       #:pixel{:position {:x 2 :y 3}
-                               :content  "o"}]]
+      expected-pixels [#:pixel{:position         {:x 2 :y 2}
+                               :foreground-color :green}
+                       #:pixel{:position         {:x 2 :y 3}
+                               :foreground-color :blue}]]
       (is (match? expected-pixels my-view)))))

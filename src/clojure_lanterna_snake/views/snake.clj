@@ -6,8 +6,8 @@
 
 (s/set-fn-validation! true)
 
-(def head-content "x")
-(def body-content "o")
+(def head-content "█")
+(def body-content "█")
 
 (s/defn ^:private body->pixel :- views.screen/Pixel
   [position :- domain.world/Position]
@@ -20,7 +20,7 @@
 
   #:pixel{:position         position
           :content          head-content
-          :foreground-color :red})
+          :foreground-color :green})
 
 (s/defn ^:private snake->head->pixel :- views.screen/Pixel
   [snake :- domain.snake/Snake]

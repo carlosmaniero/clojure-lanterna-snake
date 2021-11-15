@@ -26,7 +26,7 @@
 
 (s/defn next-frame :- GameContext
   [game-context :- GameContext
-   direction :- (s/maybe domain.snake/MovingDirection)]
+   input        :- domain.game/GameInput]
 
-  (let [next-game (update game-context :game-context/game #(domain.game/update-game % direction))]
+  (let [next-game (update game-context :game-context/game #(domain.game/update-game % input))]
     (assoc next-game :game-context/view (make-frame next-game))))

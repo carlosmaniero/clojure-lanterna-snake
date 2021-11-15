@@ -47,7 +47,7 @@
       (s/stop scr)
       (recur (game-controller/next-frame
               game
-              (key-to-moviment key))))))
+              {:game-input/direction (key-to-moviment key)})))))
 
 (defn -main
   [& args]

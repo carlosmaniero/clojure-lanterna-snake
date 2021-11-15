@@ -7,6 +7,9 @@
   #:game{:snake      domain.snake/Snake
          :world      domain.world/World})
 
+(def GameInput
+  #:game-input{(s/optional-key :direction) (s/maybe domain.snake/MovingDirection)})
+
 (s/defn create-game-with-snake
   [snake :- domain.snake/Snake
    world :- domain.world/World]
@@ -23,7 +26,8 @@
       (create-game-with-snake world)))
 
 (s/defn update-game :- Game
-  [game      :- Game
-   direction :- (s/maybe domain.snake/MovingDirection)]
+  [game  :- Game
+   input :- GameInput]
 
-  (update game :game/snake #(domain.snake/move % direction)))
+  (update game :game/snake #(domain.snake/move % (:game-input/direction input))))
+

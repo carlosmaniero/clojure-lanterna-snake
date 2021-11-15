@@ -55,9 +55,27 @@
       (domain.snake/create-snake initial-direction)
       (create-game-with-snake-and-food (create-food random-position world) world)))
 
+(s/defn snake-try-to-eat :- Game
+  [game :- Game
+   input :- GameInput]
+
+  (let [snake           (:game/snake game)
+        snake-position  (:snake/current-position snake)
+        food            (:game/food  game)
+        eaten-food      (domain.food/try-to-eat food snake-position)
+        random-position (:game-input/random-position input)
+        world           (:game/world game)]
+
+    (if (:food/eaten? eaten-food)
+      (assoc game :game/snake (domain.snake/with-extra-energy snake (:food/energy eaten-food))
+                  :game/food  (create-food random-position world))
+      game)))
+
 (s/defn update-game :- Game
   [game  :- Game
    input :- GameInput]
 
-  (update game :game/snake #(domain.snake/move % (:game-input/direction input))))
+  (snake-try-to-eat
+   (update game :game/snake #(domain.snake/move % (:game-input/direction input)))
+   input))
 

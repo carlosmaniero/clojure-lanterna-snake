@@ -18,7 +18,7 @@
 
 (deftest moving-a-snake
   #_(testing "follows the current moviment given no changed-direction"
-    (aux-matchers/snake-match-moviment-position my-snake nil {:x 1 :y 1}))
+      (aux-matchers/snake-match-moviment-position my-snake nil {:x 1 :y 1}))
 
   (testing "goes up when direction changes to up and does not allows moving down"
     (let [snake-moving-down (assoc my-snake :snake/moving-direction :moving/left)]
@@ -72,3 +72,13 @@
       150      :moving/up
       150      :moving/down)))
 
+
+(deftest snake-eating-itself
+  (testing "snake dies when it eat itself"
+    (let [snake-with-extra-energy (domain.snake/with-extra-energy my-snake 6)
+          dead-snake              (-> snake-with-extra-energy
+                                      (domain.snake/move :moving/right)
+                                      (domain.snake/move :moving/down)
+                                      (domain.snake/move :moving/left)
+                                      (domain.snake/move :moving/up))]
+      (is (false? (:snake/is-alive? dead-snake))))))

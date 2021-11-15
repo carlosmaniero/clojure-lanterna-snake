@@ -51,12 +51,10 @@
    :snake/velocity         (velocity initial-direction)
    :snake/body             [initial-position]})
 
-
 (defn is-opose-direction
   [direction current-direction]
 
   (= (direction opose-direction-map) current-direction))
-
 
 (defn normalize-direction
   [direction current-direction]
@@ -87,6 +85,25 @@
 
   (update snake :snake/extra-energy #(+ % extra-energy)))
 
+(s/defn eat-itself? :- s/Bool
+  [snake :- Snake]
+
+  (let [body                      (:snake/body snake)
+        current-position          (:snake/current-position snake)
+        total-at-current-position (count (filter #(= current-position %) body))]
+    (> total-at-current-position 1)))
+
+(s/defn kill-snake :- Snake
+  [snake :- Snake]
+  (assoc snake :snake/is-alive? false))
+
+(s/defn mark-as-dead-with-eat-itself
+  [snake :- Snake]
+
+  (if (eat-itself? snake)
+    (kill-snake snake)
+    snake))
+
 (s/defn move :- Snake
   [snake             :- Snake
    changed-direction :- (s/maybe MovingDirection)]
@@ -98,4 +115,5 @@
                :snake/current-position position
                :snake/velocity         (velocity direction))
         (strech-head position)
-        (loose-energy))))
+        (loose-energy)
+        (mark-as-dead-with-eat-itself))))

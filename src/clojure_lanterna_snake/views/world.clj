@@ -24,26 +24,17 @@
        (map inc)
        (map #(create-edge-pixel {axis % fixed-axis fixed-axis-value}))))
 
-(defn ^:private ->top-edge    [world] (->edge :x 1 (:width world) :y 1))
-(defn ^:private ->bottom-edge [world] (->edge :x 1 (:width world) :y (:height world)))
-(defn ^:private ->left-edge   [world] (->edge :y 2 (dec (:height world)) :x 1))
-(defn ^:private ->right-edge  [world] (->edge :y 2 (dec (:height world)) :x (:width world)))
-
-(defn tap
-  [any]
-
-  (do
-    (println any)
-    any))
+(defn ^:private ->top-edge    [world] (->edge :x 0 (dec (:width world)) :y 0))
+(defn ^:private ->bottom-edge [world] (->edge :x 0 (dec (:width world)) :y (dec (:height world))))
+(defn ^:private ->left-edge   [world] (->edge :y 0 (- (:height world) 2) :x 0))
+(defn ^:private ->right-edge  [world] (->edge :y 0 (- (:height world) 2) :x (dec (:width world))))
 
 (defn ->zebra-line
   [y world]
 
   (->> (:width world)
        (dec)
-       (dec)
        (range)
-       (map inc)
        (map inc)
        (map #(create-zebra-pixel {:x % :y y}))))
 
@@ -52,9 +43,7 @@
 
   (->> (:height world)
        (dec)
-       (dec)
        (range)
-       (map inc)
        (map inc)
        (map #(->zebra-line % world))
        (flatten)))

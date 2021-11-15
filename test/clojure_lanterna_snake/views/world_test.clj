@@ -6,14 +6,14 @@
 
 (def my-world {:width 3 :height 3})
 
-(def expected-view [(views.world/create-edge-pixel {:x 1 :y 1})
+(def expected-view [(views.world/create-edge-pixel {:x 0 :y 0})
+                    (views.world/create-edge-pixel {:x 1 :y 0})
+                    (views.world/create-edge-pixel {:x 2 :y 0})
+                    (views.world/create-edge-pixel {:x 0 :y 1})
                     (views.world/create-edge-pixel {:x 2 :y 1})
-                    (views.world/create-edge-pixel {:x 3 :y 1})
+                    (views.world/create-edge-pixel {:x 0 :y 2})
                     (views.world/create-edge-pixel {:x 1 :y 2})
-                    (views.world/create-edge-pixel {:x 3 :y 2})
-                    (views.world/create-edge-pixel {:x 1 :y 3})
-                    (views.world/create-edge-pixel {:x 2 :y 3})
-                    (views.world/create-edge-pixel {:x 3 :y 3})])
+                    (views.world/create-edge-pixel {:x 2 :y 2})])
 
 (defn is-my-world-center-pixel
   [pixel]

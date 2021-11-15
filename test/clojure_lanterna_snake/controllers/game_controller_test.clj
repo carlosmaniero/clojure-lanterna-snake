@@ -22,7 +22,7 @@
                             :pixel/foreground-color :red}
       expected-snake-frame {:pixel/position         {:x 10 :y 5}
                             :pixel/foreground-color :green}
-      expected-world-frame {:pixel/position         {:x 1 :y 1}
+      expected-world-frame {:pixel/position         {:x 0 :y 0}
                             :pixel/foreground-color :cyan}
       expected-frame       [expected-snake-frame
                             expected-world-frame

@@ -4,11 +4,16 @@ A text-based snake game written in clojure.
 
 ## Usage
 
+Download the latest **artifact.zip** at the 
+[releases page](https://github.com/carlosmaniero/clojure-lanterna-snake/releases).
+
+Extract it and execute the standalone jar.
+
     $ java -jar clojure-lanterna-snake-0.1.0-standalone.jar
 
 ## License
 
-Copyright © 2021 FIXME
+Copyright © 2021 Carlos Maniero
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at

@@ -39,33 +39,80 @@
                 (get-in pixel [:pixel/content])
                 {:fg (:pixel/foreground-color pixel) :bg (:pixel/background-color pixel)}))
 
-(defn run
+(defn score
+  [game]
+
+  (dec (count (get-in game [:game-context/game :game/snake :snake/body]))))
+
+(defn game->score->put-string
+  [game]
+
+  (s/put-string scr 0 (:height world) (str "Score: " (score game))))
+
+(defn game->put-string
+  [game]
+
+  (doall
+   (map pixel->put-string (get-in game [:game-context/view :game-view/frame])))
+
+  (game->score->put-string game)
+
+  (s/redraw scr))
+
+(defn next-game-key
+  [game]
+
+  (s/get-key-blocking scr {:timeout (get-in game [:game-context/game
+                                                  :game/snake
+                                                  :snake/velocity])}))
+
+(defn ask-to-quit? [key-pressed] (= key-pressed \q))
+
+(defn next-game-frame!
+  [game key]
+
+  (game-controller/next-frame
+   game
+   {:game-input/direction       (key-to-moviment key)
+    :game-input/random-position {:game-random-position/x (rand)
+                                 :game-random-position/y (rand)}}))
+
+(defn ask-for-next-game-frame!
+  [game]
+
+  (let [key (next-game-key game)]
+    (if (ask-to-quit? key)
+      nil
+      (next-game-frame! game key))))
+
+(defn show-game-over-screen
+  [game]
+  (s/put-string scr 9 8 "Game Over!" {:fg :red})
+  (s/put-string scr 9 9 "Press q to exit")
+  (game->score->put-string game)
+  (s/redraw scr)
+  (if (= \q (s/get-key-blocking scr))
+    nil
+    (recur game)))
+
+(defn game-over?
+  [game]
+
+  (not (get-in game [:game-context/game :game/snake :snake/is-alive?])))
+
+(defn game-loop!
   [game]
   (s/clear scr)
+  (if (some? game)
+    (if (game-over? game)
+      (show-game-over-screen game)
+      (do
+        (game->put-string game)
 
-  (if (not (get-in game [:game-context/game :game/snake :snake/is-alive?]))
-    (do
-      (s/put-string scr 9 8 "Game Over!" {:fg :red})
-      (s/redraw scr)
-      (s/get-key-blocking scr))
-    (do
-      (doall
-       (map pixel->put-string (get-in game [:game-context/view :game-view/frame])))
-
-      (s/redraw scr)
-
-      (let [key (s/get-key-blocking scr {:timeout (get-in game [:game-context/game
-                                                                :game/snake
-                                                                :snake/velocity])})]
-        (if (= key \q)
-          (s/stop scr)
-          (recur (game-controller/next-frame
-                  game
-                  {:game-input/direction   (key-to-moviment key)
-                   :game-input/random-position {:game-random-position/x (rand)
-                                                :game-random-position/y (rand)}})))))))
+        (recur (ask-for-next-game-frame! game))))
+    (s/stop scr)))
 
 (defn -main
   [& args]
   (s/start scr)
-  (run (start-game)))
+  (game-loop! (start-game)))

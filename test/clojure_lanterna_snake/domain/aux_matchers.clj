@@ -5,15 +5,15 @@
   )
 
 (defn snake-match-moviment
-  [snake changed-direction snake-move-diff]
-  (let [snake-after-move    (domain.snake/move snake changed-direction)]
+  [snake snake-move-diff]
+  (let [snake-after-move    (domain.snake/move snake)]
     (do (is (match? snake-move-diff
                     snake-after-move)))
     snake-after-move))
 
 (defn snake-match-moviment-position
-  [snake changed-direction expected-position]
+  [snake expected-position]
 
   (let [snake-move-diff #:snake{:body             [expected-position]
                                 :current-position expected-position}]
-    (snake-match-moviment snake changed-direction snake-move-diff)))
+    (snake-match-moviment snake snake-move-diff)))

@@ -113,8 +113,7 @@
     snake))
 
 (s/defn move :- Snake
-  [snake             :- Snake
-   changed-direction :- (s/maybe MovingDirection)]
+  [snake :- Snake]
 
   (let [direction (:snake/moving-direction snake)
         position  (position-after-move (:snake/current-position snake) direction)]

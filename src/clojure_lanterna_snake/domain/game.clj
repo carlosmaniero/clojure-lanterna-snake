@@ -97,7 +97,7 @@
 
   (-> snake
       (change-snake-direction-when-inputed input)
-      (domain.snake/move nil)))
+      (domain.snake/move)))
 
 (s/defn update-game :- Game
   [game  :- Game

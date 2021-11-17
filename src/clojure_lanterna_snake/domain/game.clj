@@ -83,11 +83,27 @@
       (update game :game/snake domain.snake/kill-snake)
       game)))
 
+(s/defn change-snake-direction-when-inputed
+  [snake :- domain.snake/Snake
+   input :- GameInput]
+
+  (if (nil? (:game-input/direction input))
+    snake
+    (domain.snake/change-direction snake (:game-input/direction input))))
+
+(s/defn update-snake :- domain.snake/Snake
+  [snake :- domain.snake/Snake
+   input :- GameInput]
+
+  (-> snake
+      (change-snake-direction-when-inputed input)
+      (domain.snake/move nil)))
+
 (s/defn update-game :- Game
   [game  :- Game
    input :- GameInput]
 
-  (-> (update game :game/snake #(domain.snake/move % (:game-input/direction input)))
+  (-> (update game :game/snake #(update-snake % input))
       (snake-try-to-eat input)
       (snake-dead-if-collides)))
 

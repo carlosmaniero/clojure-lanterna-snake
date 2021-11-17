@@ -17,37 +17,32 @@
                 my-snake))))
 
 (deftest moving-a-snake
-  #_(testing "follows the current moviment given no changed-direction"
-      (aux-matchers/snake-match-moviment-position my-snake nil {:x 1 :y 1}))
+  (testing "follows the current moviment given no changed-direction"
+    (aux-matchers/snake-match-moviment-position my-snake nil {:x 1 :y 1}))
 
   (testing "goes up when direction changes to up and does not allows moving down"
-    (let [snake-moving-down (assoc my-snake :snake/moving-direction :moving/left)]
-      (-> snake-moving-down
+    (-> my-snake
           (aux-matchers/snake-match-moviment-position :moving/up   {:x 1 :y 1})
           (aux-matchers/snake-match-moviment-position nil          {:x 1 :y 0})
-          (aux-matchers/snake-match-moviment-position nil          {:x 1 :y -1})
-          (aux-matchers/snake-match-moviment-position :moving/down {:x 1 :y -2}))))
+          (aux-matchers/snake-match-moviment-position nil          {:x 1 :y -1}))))
 
   (testing "goes down when direction changes to down and does not allows moving up"
-    (-> (assoc my-snake :snake/moving-direction :moving/left)
-        (aux-matchers/snake-match-moviment-position :moving/down {:x 1 :y 3})
-        (aux-matchers/snake-match-moviment-position nil          {:x 1 :y 4})
-        (aux-matchers/snake-match-moviment-position nil          {:x 1 :y 5})
-        (aux-matchers/snake-match-moviment-position :moving/up   {:x 1 :y 6})))
+    (-> (domain.snake/create-snake initial-position :moving/down)
+        (aux-matchers/snake-match-moviment-position nil {:x 1 :y 3})
+        (aux-matchers/snake-match-moviment-position nil {:x 1 :y 4})
+        (aux-matchers/snake-match-moviment-position nil {:x 1 :y 5})))
 
   (testing "goes left when direction changes to left and does not allows moving right"
-    (-> my-snake
-        (aux-matchers/snake-match-moviment-position :moving/left  {:x 0 :y 2})
-        (aux-matchers/snake-match-moviment-position nil           {:x -1 :y 2})
-        (aux-matchers/snake-match-moviment-position nil           {:x -2 :y 2})
-        (aux-matchers/snake-match-moviment-position :moving/right {:x -3 :y 2})))
+    (-> (domain.snake/create-snake initial-position :moving/left)
+        (aux-matchers/snake-match-moviment-position nil {:x 0 :y 2})
+        (aux-matchers/snake-match-moviment-position nil {:x -1 :y 2})
+        (aux-matchers/snake-match-moviment-position nil {:x -2 :y 2})))
 
   (testing "goes right when direction changes to right and does not allows moving left"
-    (-> my-snake
-        (aux-matchers/snake-match-moviment-position :moving/right {:x 2 :y 2})
-        (aux-matchers/snake-match-moviment-position nil           {:x 3 :y 2})
-        (aux-matchers/snake-match-moviment-position nil           {:x 4 :y 2})
-        (aux-matchers/snake-match-moviment-position :moving/left  {:x 5 :y 2}))))
+    (-> (domain.snake/create-snake initial-position :moving/right)
+        (aux-matchers/snake-match-moviment-position nil {:x 2 :y 2})
+        (aux-matchers/snake-match-moviment-position nil {:x 3 :y 2})
+        (aux-matchers/snake-match-moviment-position nil {:x 4 :y 2})))
 
 (deftest with-extra-energy
   (testing "does not removes tails when moving given an extra energy"
@@ -63,22 +58,60 @@
                     (domain.snake/with-extra-energy 1))))))
 
 (deftest controlling-velocity
-  (testing "snake controlls velocy"
+  (testing "snake controlls velocy when creating a snake"
     (are
      [expected direction]
-     (= expected (:snake/velocity (domain.snake/move my-snake direction)))
+     (= expected (-> (domain.snake/create-snake initial-position direction)
+                     (:snake/velocity)))
       100      :moving/left
       100      :moving/right
       150      :moving/up
-      150      :moving/down)))
+      150      :moving/down))
 
+  (testing "snake controlls velocy when changing directions"
+    (are
+        [expected current-direction next-direction]
+        (= expected (-> (domain.snake/create-snake initial-position current-direction)
+                        (domain.snake/change-direction next-direction)
+                        (:snake/velocity)))
+      100   :moving/down    :moving/left
+      100   :moving/down    :moving/right
+      150   :moving/left    :moving/up
+      150   :moving/left    :moving/down)))
+
+(deftest changing-direction
+  (testing "snake cannot reverse the current direction"
+    (are
+     [expected current-direction next-direction]
+     (= expected (-> (domain.snake/create-snake initial-position current-direction)
+                     (domain.snake/change-direction next-direction)
+                     (:snake/moving-direction)))
+      ;; allowed
+      :moving/right :moving/up    :moving/right
+      :moving/right :moving/down  :moving/right
+      :moving/left  :moving/up    :moving/left
+      :moving/left  :moving/down  :moving/left
+      :moving/down  :moving/left  :moving/down
+      :moving/down  :moving/right :moving/down
+      :moving/up    :moving/left  :moving/up
+      :moving/up    :moving/right :moving/up
+
+      ;; not-allowed
+      :moving/left  :moving/left  :moving/right
+      :moving/right :moving/right :moving/left
+      :moving/down  :moving/down  :moving/up
+      :moving/up    :moving/up    :moving/down)))
 
 (deftest snake-eating-itself
   (testing "snake dies when it eat itself"
     (let [snake-with-extra-energy (domain.snake/with-extra-energy my-snake 6)
           dead-snake              (-> snake-with-extra-energy
-                                      (domain.snake/move :moving/right)
-                                      (domain.snake/move :moving/down)
-                                      (domain.snake/move :moving/left)
-                                      (domain.snake/move :moving/up))]
+                                      (domain.snake/change-direction :moving/right)
+                                      (domain.snake/move nil)
+                                      (domain.snake/change-direction :moving/down)
+                                      (domain.snake/move nil)
+                                      (domain.snake/change-direction :moving/left)
+                                      (domain.snake/move nil)
+                                      (domain.snake/change-direction :moving/up)
+                                      (domain.snake/move nil))]
       (is (false? (:snake/is-alive? dead-snake))))))

@@ -38,3 +38,12 @@
                                                                :game-input/random-position random-max-position})]
 
       (is (match? {:snake/is-alive? false} (:game/snake game-snake-dead))))))
+
+(deftest changing-direction
+  (testing "changes direction when direction is given"
+    (let [new-direction :moving/right
+          game  (domain.game/create-game my-world :moving/up random-max-position)
+          game-snake-moving-right (domain.game/update-game game {:game-input/direction new-direction
+                                                                 :game-input/random-position random-max-position})
+          snake-direction-after-update (get-in game-snake-moving-right [:game/snake :snake/moving-direction])]
+      (is (= new-direction snake-direction-after-update)))))

@@ -1,7 +1,10 @@
 (ns clojure-lanterna-snake.main
   (:require [lanterna.screen :as s]
+            [schema.core :as schema]
             [clojure-lanterna-snake.controllers.game-controller :as game-controller])
   (:gen-class))
+
+(schema/set-fn-validation! true)
 
 (def scr (s/get-screen :text))
 (def world {:width 80 :height 20})

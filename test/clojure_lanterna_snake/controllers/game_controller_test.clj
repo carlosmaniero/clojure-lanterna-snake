@@ -1,9 +1,7 @@
 (ns clojure-lanterna-snake.controllers.game-controller-test
   (:require [clojure.test :refer :all]
-            [clojure-lanterna-snake.views.snake :as views.snake]
-            [clojure-lanterna-snake.domain.snake :as domain.snake]
             [clojure-lanterna-snake.controllers.game-controller :as game-controller]
-            [matcher-combinators.test]
+            [matcher-combinators.test :refer :all]
             [matcher-combinators.matchers :as m]))
 
 (def my-world {:width 21 :height 11})
@@ -16,7 +14,7 @@
 (deftest creating-a-game
   (testing "creates the view of the current state"
     (let
-     [expected-snake       #:snake{:current-position {:x 10 :y 5}
+     [expected-snake       #:snake{:head-position {:x 10 :y 5}
                                    :moving-direction :moving/up}
       expected-food-frame  {:pixel/content          "█"
                             :pixel/foreground-color :red}

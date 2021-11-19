@@ -60,14 +60,14 @@
    input :- GameInput]
 
   (let [snake           (:game/snake game)
-        snake-position  (:snake/current-position snake)
+        snake-position  (:snake/head-position snake)
         food            (:game/food  game)
         eaten-food      (domain.food/try-to-eat food snake-position)
         random-position (:game-input/random-position input)
         world           (:game/world game)]
 
     (if (:food/eaten? eaten-food)
-      (assoc game :game/snake (domain.snake/with-extra-energy snake (:food/energy eaten-food))
+      (assoc game :game/snake (domain.snake/adds-extra-energy snake (:food/energy eaten-food))
              :game/food  (create-food random-position world))
       game)))
 
@@ -75,7 +75,7 @@
   [game :- Game]
 
   (let [snake          (:game/snake game)
-        snake-position (:snake/current-position snake)
+        snake-position (:snake/head-position snake)
         world          (:game/world game)
         colided        (domain.world/collided-with? world snake-position)]
 

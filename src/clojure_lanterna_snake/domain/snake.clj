@@ -1,9 +1,7 @@
 (ns clojure-lanterna-snake.domain.snake
-  (:require [schema.core :as s]
-            [clojure-lanterna-snake.domain.world :as domain.world]))
-
-;; it should be added globally
-(s/set-fn-validation! true)
+  (:require
+   [clojure-lanterna-snake.domain.world :as domain.world]
+   [schema.core :as s]))
 
 (def MovingDirection (s/enum :moving/up :moving/right :moving/left :moving/down))
 
@@ -35,7 +33,7 @@
     (= :moving/right direction) (update position :x inc)))
 
 (def Snake
-  {:snake/current-position domain.world/Position
+  {:snake/head-position domain.world/Position
    :snake/is-alive?        s/Bool
    :snake/moving-direction MovingDirection
    :snake/extra-energy     s/Int
@@ -46,7 +44,7 @@
   [initial-position :- domain.world/Position
    initial-direction :- MovingDirection]
 
-  {:snake/current-position initial-position
+  {:snake/head-position initial-position
    :snake/moving-direction initial-direction
    :snake/is-alive?        true
    :snake/extra-energy     0
@@ -62,12 +60,6 @@
   (if (is-opose-direction direction current-direction)
     current-direction
     direction))
-
-(s/defn ^:private normalized-direction-or-snake-moving-direction :- MovingDirection
-  [direction snake]
-  (if (nil? direction)
-    (:snake/moving-direction snake)
-    (normalize-direction direction (:snake/moving-direction snake))))
 
 (s/defn change-direction :- Snake
   [snake :- Snake
@@ -87,17 +79,17 @@
     (update snake :snake/extra-energy dec)
     (update snake :snake/body         drop-last)))
 
-(s/defn with-extra-energy :- Snake
+(s/defn adds-extra-energy :- Snake
   [snake        :- Snake
    extra-energy :- s/Int]
 
   (update snake :snake/extra-energy #(+ % extra-energy)))
 
-(s/defn eat-itself? :- s/Bool
+(s/defn ^:private ate-itself? :- s/Bool
   [snake :- Snake]
 
   (let [body                      (:snake/body snake)
-        current-position          (:snake/current-position snake)
+        current-position          (:snake/head-position snake)
         total-at-current-position (count (filter #(= current-position %) body))]
     (> total-at-current-position 1)))
 
@@ -105,10 +97,10 @@
   [snake :- Snake]
   (assoc snake :snake/is-alive? false))
 
-(s/defn mark-as-dead-with-eat-itself
+(s/defn ^:private mark-as-dead-if-ate-itself
   [snake :- Snake]
 
-  (if (eat-itself? snake)
+  (if (ate-itself? snake)
     (kill-snake snake)
     snake))
 
@@ -116,9 +108,9 @@
   [snake :- Snake]
 
   (let [direction (:snake/moving-direction snake)
-        position  (position-after-move (:snake/current-position snake) direction)]
+        position  (position-after-move (:snake/head-position snake) direction)]
     (-> snake
-        (assoc :snake/current-position position)
+        (assoc :snake/head-position position)
         (strech-head position)
         (loose-energy)
-        (mark-as-dead-with-eat-itself))))
+        (mark-as-dead-if-ate-itself))))

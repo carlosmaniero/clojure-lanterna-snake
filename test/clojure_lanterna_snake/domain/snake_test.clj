@@ -1,8 +1,9 @@
 (ns clojure-lanterna-snake.domain.snake-test
-  (:require [clojure.test :refer :all]
-            [matcher-combinators.test]
-            [clojure-lanterna-snake.domain.snake :as domain.snake]
-            [clojure-lanterna-snake.domain.aux-matchers :as aux-matchers]))
+  (:require
+   [clojure-lanterna-snake.domain.snake :as domain.snake]
+   [clojure-lanterna-snake.domain.snake-matchers :as aux-matchers]
+   [clojure.test :refer :all]
+   [matcher-combinators.test :refer [match?]]))
 
 (def initial-position {:x 1 :y 2})
 (def initial-direction :moving/up)
@@ -11,7 +12,7 @@
 (deftest snake-creation-tests
   (testing "creates a snake with the initial position"
     (is (match? #:snake{:is-alive?        true
-                        :current-position initial-position
+                        :head-position initial-position
                         :moving-direction initial-direction
                         :body             [initial-position]}
                 my-snake))))
@@ -47,15 +48,15 @@
 (deftest with-extra-energy
   (testing "does not removes tails when moving given an extra energy"
     (-> my-snake
-        (domain.snake/with-extra-energy 1)
-        (aux-matchers/snake-match-moviment {:snake/body [{:x 1 :y 1} {:x 1 :y 2}]})
-        (aux-matchers/snake-match-moviment {:snake/body [{:x 1 :y 0} {:x 1 :y 1}]})))
+        (domain.snake/adds-extra-energy 1)
+        (aux-matchers/match-snake-after-moviment {:snake/body [{:x 1 :y 1} {:x 1 :y 2}]})
+        (aux-matchers/match-snake-after-moviment {:snake/body [{:x 1 :y 0} {:x 1 :y 1}]})))
 
   (testing "extra energy is culmulative"
     (is (match? {:snake/extra-energy 2}
                 (-> my-snake
-                    (domain.snake/with-extra-energy 1)
-                    (domain.snake/with-extra-energy 1))))))
+                    (domain.snake/adds-extra-energy 1)
+                    (domain.snake/adds-extra-energy 1))))))
 
 (deftest controlling-velocity
   (testing "snake controlls velocy when creating a snake"
@@ -104,7 +105,7 @@
 
 (deftest snake-eating-itself
   (testing "snake dies when it eat itself"
-    (let [snake-with-extra-energy (domain.snake/with-extra-energy my-snake 6)
+    (let [snake-with-extra-energy (domain.snake/adds-extra-energy my-snake 6)
           dead-snake              (-> snake-with-extra-energy
                                       (domain.snake/change-direction :moving/right)
                                       (domain.snake/move)

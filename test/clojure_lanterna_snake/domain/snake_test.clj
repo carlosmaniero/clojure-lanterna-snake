@@ -12,7 +12,6 @@
 (deftest snake-creation-tests
   (testing "creates a snake with the initial position"
     (is (match? #:snake{:is-alive?        true
-                        :head-position initial-position
                         :moving-direction initial-direction
                         :body             [initial-position]}
                 my-snake))))

@@ -60,9 +60,9 @@
    input :- GameInput]
 
   (let [snake           (:game/snake game)
-        snake-position  (:snake/head-position snake)
+        head-position  (domain.snake/head-position snake)
         food            (:game/food  game)
-        eaten-food      (domain.food/try-to-eat food snake-position)
+        eaten-food      (domain.food/try-to-eat food head-position)
         random-position (:game-input/random-position input)
         world           (:game/world game)]
 
@@ -75,7 +75,7 @@
   [game :- Game]
 
   (let [snake          (:game/snake game)
-        snake-position (:snake/head-position snake)
+        snake-position (domain.snake/head-position snake)
         world          (:game/world game)
         colided        (domain.world/collided-with? world snake-position)]
 

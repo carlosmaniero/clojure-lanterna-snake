@@ -33,8 +33,7 @@
     (= :moving/right direction) (update position :x inc)))
 
 (def Snake
-  {:snake/head-position domain.world/Position
-   :snake/is-alive?        s/Bool
+  {:snake/is-alive?        s/Bool
    :snake/moving-direction MovingDirection
    :snake/extra-energy     s/Int
    :snake/velocity         s/Int
@@ -44,12 +43,16 @@
   [initial-position :- domain.world/Position
    initial-direction :- MovingDirection]
 
-  {:snake/head-position initial-position
-   :snake/moving-direction initial-direction
+  {:snake/moving-direction initial-direction
    :snake/is-alive?        true
    :snake/extra-energy     0
    :snake/velocity         (velocity initial-direction)
    :snake/body             [initial-position]})
+
+(s/defn head-position :- domain.world/Position
+  [snake :- Snake]
+
+  (-> snake :snake/body first))
 
 (defn is-opose-direction [direction current-direction]
   (= (direction opose-direction-map) current-direction))
@@ -89,7 +92,7 @@
   [snake :- Snake]
 
   (let [body                      (:snake/body snake)
-        current-position          (:snake/head-position snake)
+        current-position          (head-position snake)
         total-at-current-position (count (filter #(= current-position %) body))]
     (> total-at-current-position 1)))
 
@@ -108,9 +111,8 @@
   [snake :- Snake]
 
   (let [direction (:snake/moving-direction snake)
-        position  (position-after-move (:snake/head-position snake) direction)]
+        position  (position-after-move (head-position snake) direction)]
     (-> snake
-        (assoc :snake/head-position position)
         (strech-head position)
         (loose-energy)
         (mark-as-dead-if-ate-itself))))

@@ -14,17 +14,17 @@
 (deftest creating-a-game
   (testing "creates the view of the current state"
     (let
-     [expected-snake       #:snake{:head-position {:x 10 :y 5}
-                                   :moving-direction :moving/up}
-      expected-food-frame  {:pixel/content          "█"
-                            :pixel/foreground-color :red}
-      expected-snake-frame {:pixel/position         {:x 10 :y 5}
-                            :pixel/foreground-color :green}
-      expected-world-frame {:pixel/position         {:x 0 :y 0}
-                            :pixel/foreground-color :cyan}
-      expected-frame       [expected-snake-frame
-                            expected-world-frame
-                            expected-food-frame]]
+        [head-position        {:x 10 :y 5}
+         expected-snake       #:snake{:moving-direction :moving/up}
+         expected-food-frame  {:pixel/content          "█"
+                               :pixel/foreground-color :red}
+         expected-snake-frame {:pixel/position         head-position
+                               :pixel/foreground-color :green}
+         expected-world-frame {:pixel/position         {:x 0 :y 0}
+                               :pixel/foreground-color :cyan}
+         expected-frame       [expected-snake-frame
+                               expected-world-frame
+                               expected-food-frame]]
       (is (match? expected-snake
                   (get-in my-game [:game-context/game :game/snake])))
       (is (match? (m/embeds expected-frame)

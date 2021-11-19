@@ -21,7 +21,7 @@
 (deftest eating-food
   (testing "adds extra energy and spawn another food"
     (let [game                    (domain.game/create-game my-world :moving/up random-position)
-          game-snake-about-to-eat (assoc-in game [:game/snake :snake/head-position] {:x 1 :y 2})
+          game-snake-about-to-eat (assoc-in game [:game/snake :snake/body] [{:x 1 :y 2}])
           game-snake-ate          (domain.game/update-game game-snake-about-to-eat
                                                            {:game-input/direction nil
                                                             :game-input/random-position random-max-position})]
@@ -32,7 +32,7 @@
 (deftest colliding-with-border
   (testing "snake is dead when collides with border"
     (let [game                       (domain.game/create-game my-world :moving/up random-position)
-          game-snake-about-to-colide (assoc-in game [:game/snake :snake/head-position] {:x 1 :y 1})
+          game-snake-about-to-colide (assoc-in game [:game/snake :snake/body] [{:x 1 :y 1}])
           game-snake-dead            (domain.game/update-game game-snake-about-to-colide
                                                               {:game-input/direction nil
                                                                :game-input/random-position random-max-position})]
